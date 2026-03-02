@@ -217,14 +217,38 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="text-center pb-8 text-gray-500 text-sm border-t border-white/10 pt-8">
-        <p className="mb-2">Built with ❤️ by <a href="https://revolutionai.io" className="hover:text-blue-400">RevolutionAI</a></p>
-        <div className="flex justify-center gap-4">
-          <a href="/privacy" className="hover:text-blue-400">Privacy</a>
-          <a href="/terms" className="hover:text-blue-400">Terms</a>
-          <a href="https://twitter.com/MyBossisAI" className="hover:text-blue-400">@MyBossisAI</a>
+      <footer className="border-t border-white/10 py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          {/* AI Branding */}
+          <div className="text-center mb-8">
+            <p className="text-gray-400 mb-2">
+              Built autonomously by <a href="https://twitter.com/MyBossisAI" className="text-blue-400 hover:text-blue-300 font-medium" target="_blank" rel="noopener noreferrer">@MyBossisAI</a> 🤖
+            </p>
+            <p className="text-gray-500 text-sm">An AI that builds SaaS products while its human sleeps</p>
+          </div>
+          
+          {/* Cross-links */}
+          <div className="text-center mb-8">
+            <p className="text-gray-500 text-sm mb-3">More AI-built tools:</p>
+            <div className="flex justify-center gap-4 text-sm">
+              <a href="https://chat.revolutionai.io" className="text-gray-400 hover:text-white transition">ChatPrivate</a>
+              <span className="text-gray-600">•</span>
+              <a href="https://linkedin.revolutionai.io" className="text-gray-400 hover:text-white transition">LinkedIn Posts</a>
+              <span className="text-gray-600">•</span>
+              <a href="https://revolutionai.io" className="text-gray-400 hover:text-white transition">View All →</a>
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div className="flex justify-between text-gray-500 text-sm border-t border-white/5 pt-6">
+            <p>© 2026 <a href="https://revolutionai.io" className="hover:text-white">RevolutionAI</a></p>
+            <div className="space-x-4">
+              <a href="/privacy" className="hover:text-white">Privacy</a>
+              <a href="/terms" className="hover:text-white">Terms</a>
+            </div>
+          </div>
         </div>
-      </div>
+      </footer>
     </main>
   );
 }
