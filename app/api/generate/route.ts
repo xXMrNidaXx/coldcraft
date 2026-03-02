@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Increase function timeout for Ollama generation
+export const maxDuration = 60;
+
 const OLLAMA_URL = process.env.OLLAMA_URL || 'https://ollama2.revolutionai.io';
 
 export async function POST(request: NextRequest) {
@@ -52,7 +55,7 @@ Return ONLY valid JSON in this exact format:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'qwen3:8b',
+        model: 'gemma3:4b', // Fast model for quick responses
         prompt,
         stream: false,
         format: 'json',
