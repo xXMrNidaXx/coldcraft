@@ -134,7 +134,7 @@ export default function Home() {
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50"
             >
-              {loading ? 'Generating...' : '✨ Generate 3 Email Variants'}
+              {loading ? '⏳ Generating (may take 30-60s on first run)...' : '✨ Generate 3 Email Variants'}
             </button>
 
             <p className="text-center text-gray-400 text-sm">
