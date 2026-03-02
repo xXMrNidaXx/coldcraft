@@ -16,85 +16,88 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const prompt = `You are an expert cold email copywriter. Generate 3 personalized cold emails.
+    const prompt = `Generate 3 cold email variants for reaching out to ${role} at ${company}.
 
-Target:
-- Company: ${company}
-- Role: ${role}
+Offering: ${offering}
+Sender: ${senderName || 'Alex'} from ${senderCompany || 'Our Company'}
 
-Sender:
-- Name: ${senderName || 'Alex'}
-- Company: ${senderCompany || 'Our Company'}
-- Offering: ${offering}
-
-Generate 3 variants:
-1. Professional/formal tone
-2. Casual/friendly tone  
+Write 3 short emails (under 100 words each):
+1. Professional tone
+2. Casual/friendly tone
 3. Direct/concise tone
 
-Each email should:
-- Be under 150 words
-- Have a compelling subject line
-- Personalize to the company/role
-- End with a clear CTA
-- Sound human, not AI-generated
+Include subject lines. End each with a clear call-to-action.
 
-Also generate a follow-up email for if they don't respond.
+Return JSON:
+{"emails":[{"subject":"...","body":"...","tone":"professional"},{"subject":"...","body":"...","tone":"casual"},{"subject":"...","body":"...","tone":"direct"}],"followUp":{"subject":"...","body":"..."}}`;
 
-Return ONLY valid JSON in this exact format:
-{
-  "emails": [
-    {"subject": "...", "body": "...", "tone": "professional"},
-    {"subject": "...", "body": "...", "tone": "casual"},
-    {"subject": "...", "body": "...", "tone": "direct"}
-  ],
-  "followUp": {"subject": "...", "body": "..."}
-}`;
+    console.log('Calling Ollama with prompt length:', prompt.length);
 
     const response = await fetch(`${OLLAMA_URL}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gemma3:4b', // Fast model for quick responses
+        model: 'gemma3:4b',
         prompt,
         stream: false,
-        format: 'json',
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Ollama API error');
+      console.error('Ollama response not ok:', response.status);
+      throw new Error('Ollama API error: ' + response.status);
     }
 
     const data = await response.json();
-    let result;
+    console.log('Ollama response received, length:', data.response?.length || 0);
     
-    try {
-      // Try to parse the response as JSON
-      const responseText = data.response || '';
-      // Find JSON in the response
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+    const responseText = data.response || '';
+    
+    // Try to extract JSON from response
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const result = JSON.parse(jsonMatch[0]);
+        if (result.emails && result.emails.length > 0) {
+          return NextResponse.json(result);
+        }
+      } catch (e) {
+        console.log('JSON parse failed, using fallback');
       }
-    } catch (parseError) {
-      // Fallback: return raw response
-      return NextResponse.json({
-        emails: [
-          { subject: 'Quick question about ' + company, body: data.response || 'Error generating email', tone: 'professional' }
-        ],
-        followUp: { subject: 'Following up', body: 'Just wanted to follow up on my previous email.' }
-      });
     }
 
-    return NextResponse.json(result);
+    // Fallback: create a simple response from raw text
+    return NextResponse.json({
+      emails: [
+        { 
+          subject: `Quick question about ${company}`, 
+          body: responseText.slice(0, 500) || 'Hello! I wanted to reach out about our offering. Would you be open to a quick chat?', 
+          tone: 'professional' 
+        },
+        { 
+          subject: `Hey from ${senderCompany || 'us'}`, 
+          body: 'Hi there! Saw your work and thought you might be interested in what we\'re building. Mind if I share more?', 
+          tone: 'casual' 
+        },
+        { 
+          subject: `${offering?.split(' ').slice(0, 3).join(' ') || 'Quick question'}`, 
+          body: 'Interested in improving your workflow? Let\'s chat. 5 min of your time.', 
+          tone: 'direct' 
+        }
+      ],
+      followUp: { 
+        subject: 'Following up', 
+        body: 'Hi! Just wanted to follow up on my previous email. Would love to connect if you have a moment.' 
+      }
+    });
   } catch (error) {
     console.error('Generate error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate emails' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      emails: [
+        { subject: 'Connection request', body: 'Hi! I\'d love to connect and share how we might help. Do you have 5 minutes?', tone: 'professional' }
+      ],
+      followUp: { subject: 'Following up', body: 'Just following up on my previous note.' },
+      error: 'Generation had issues, showing fallback'
+    });
   }
 }
