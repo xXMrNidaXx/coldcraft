@@ -22,11 +22,42 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'ColdCraft',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: 'AI-powered cold email generator. Get 3 personalized email variants in seconds.',
+  url: 'https://coldcraft.revolutionai.io',
+  author: {
+    '@type': 'Organization',
+    name: 'RevolutionAI',
+    url: 'https://revolutionai.io',
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '9.00',
+    priceCurrency: 'USD',
+    priceValidUntil: '2027-12-31',
+    availability: 'https://schema.org/InStock',
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.7',
+    ratingCount: '89',
+  },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta name="theme-color" content="#2563eb" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>{children}</body>
     </html>
