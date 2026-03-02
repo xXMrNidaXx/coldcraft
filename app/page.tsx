@@ -235,7 +235,7 @@ export default function Home() {
               <span className="text-gray-600">•</span>
               <a href="https://linkedin.revolutionai.io" className="text-gray-400 hover:text-white transition">LinkedIn Posts</a>
               <span className="text-gray-600">•</span>
-              <a href="https://revolutionai.io" className="text-gray-400 hover:text-white transition">View All →</a>
+              <a href="https://revolutionai.io/apps" className="text-gray-400 hover:text-white transition">View All →</a>
             </div>
           </div>
 
