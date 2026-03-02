@@ -16,6 +16,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate input lengths
+    if (company.length < 2 || role.length < 2 || offering.length < 10) {
+      return NextResponse.json(
+        { error: 'Please provide more detail. Company and role need 2+ chars, offering needs 10+ chars.' },
+        { status: 400 }
+      );
+    }
+
+    if (offering.length > 500) {
+      return NextResponse.json(
+        { error: 'Offering too long. Keep it under 500 characters.' },
+        { status: 400 }
+      );
+    }
+
     const prompt = `Generate 3 cold email variants for reaching out to ${role} at ${company}.
 
 Offering: ${offering}
